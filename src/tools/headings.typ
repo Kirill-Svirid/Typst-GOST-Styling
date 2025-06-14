@@ -14,7 +14,6 @@
 )
 
 #let headings = body => {
-  set heading(numbering: "1.1.1")
 
   let structural-heading = structural-heading-titles
     .values()

@@ -1,9 +1,9 @@
-#let header-counter = counter("header-all")
+// #let header-counter = counter("header-all")
 
-#show heading: it => {
-  header-counter.step()
-  it
-}
+// #show heading: it => {
+//   header-counter.step()
+//   it
+// }
 
 // Break outline feed by specified break-points (array or int).
 // Before usage counter header-all must be applied to headers.
@@ -11,7 +11,8 @@
   let loc = entry.element.location()
   let c = counter("header-all").at(loc).at(0)
   if type(break-points) == int { break-points = (break-points,) }
-  if break-points.contains(c) { pagebreak(weak: true) + entry } else { entry }
+  if break-points.contains(c) { pagebreak(weak: true) + entry } else {entry}
+  // [ #c #entry.body() \ ]
 }
 
 

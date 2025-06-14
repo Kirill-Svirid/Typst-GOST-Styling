@@ -2,10 +2,11 @@
 #import "tools/annexes.typ": is-heading-in-annex
 #import "tools/pageframe.typ": page-frame-sequence
 #import "tools/utils.typ": is-empty
+#import "tools/base.typ": *
+
 
 #let enum-set-heading-numbering(doc) = {
   set enum(
-    // tight: true,
     numbering: (..n) => context {
       let headings = query(selector(heading).before(here()))
       let last = headings.at(-1)
@@ -104,7 +105,9 @@
 }
 
 #let style-ver-1(doc) = {
-  set text(lang: "ru", font: "Times New Roman")
+  set text(lang: "ru", font: "Times New Roman", size: 13pt)
+  show: set-base-style.with()
+
   show outline.entry: it => {
     if is-heading-in-annex(it.element) {
       link(
@@ -116,22 +119,19 @@
             + box(width: 1fr, it.fill)
             + sym.space
             + sym.wj
-            + text(fill: red, it.page()),
+            + it.page(),
         ),
       )
     } else {
       it
     }
   }
+
+  set heading(numbering: "1.1.1")
+
   let header-counter = counter("header-all")
 
-  show heading: it => {
-    header-counter.step()
-    it
-  }
-
   show: correctly-indent-list-and-enum-items
-
 
   set page(margin: (left: 3cm, rest: 2cm))
 
@@ -164,13 +164,11 @@
     it
   }
 
-  show heading.where(level: 1): it => {
-    pagebreak(weak: true)
-    it
-  }
+  // show heading.where(level: 1): it => {
+  //   // pagebreak(weak: true)
+  //   it
+  // }
 
-  // set heading(hanging-indent: 0mm)
-  set par(hanging-indent: 0mm)
 
   show figure: it => block(if it.has("caption") {
     show figure.caption: caption => {
@@ -186,6 +184,24 @@
   })
 
   set list(marker: [–])
+
+  show heading: it => {
+    if it.level == 1 {
+      (
+        pagebreak(weak: true)
+          + block(
+            it,
+            fill: color.hsl(200deg, 15%, 75%, 30%),
+            above: 12pt,
+            below: 18pt,
+            inset: 1mm,
+            radius: 2mm,
+          )
+      )
+    } else { it }
+    // it
+    header-counter.step()
+  }
 
   doc
 }
