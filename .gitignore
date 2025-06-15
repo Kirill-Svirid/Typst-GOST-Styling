@@ -1,1 +1,6 @@
-**/*.pdf
+*.pdf
+*.png
+
+
+!tests/**/*.pdf
+!tests/**/*.png

@@ -2,24 +2,23 @@
   intro: [Введение],
   abstract: [Реферат],
   conclusion: [Заключение],
-  content-list: [Содержание],
+  content-list-ver-1: [Содержание],
+  content-list-ver-2: [Оглавление],
   term-list-var-1: [Термины и определения],
   term-list-var-2: [Обозначения и сокращения],
-  abbreviation-list: [Перечень сокращений и обозначений],
+  abbreviation-list-ver-1: [Перечень сокращений и обозначений],
+  abbreviation-list-ver-2: [Обозначения и сокращения],
   performer-list: [Список исполнителей],
-  reference-list: [Список использованных источников],
-  reference-list-docs:[Ссылочные документы],
-  reference-list-normative-docs:[Ссылочные нормативные документы],
-  reference-list-bibliography:[Библиография]
+  reference-list-gen: [Список использованных источников],
+  reference-list-docs: [Ссылочные документы],
+  reference-list-normative-docs: [Ссылочные нормативные документы],
+  reference-list-bibliography: [Библиография],
 )
 
-#let headings = body => {
-
-  let structural-heading = structural-heading-titles
-    .values()
-    .fold(selector, (acc, heading-body) => acc.or(heading.where(body: heading-body, level: 1)))
-
-  show structural-heading: set heading(numbering: none)
-
+// Selects headings of level 1 and body of special list of content to disable enumeration for them (GOST requirements)
+#let set-heading-titles = body => {
+  let folder-func(sel, item) = sel.or(heading.where(body: item, level: 1))
+  let selector-structural-heading = structural-heading-titles.values().fold(selector, folder-func)
+  show selector-structural-heading: set heading(numbering: none)
   body
 }

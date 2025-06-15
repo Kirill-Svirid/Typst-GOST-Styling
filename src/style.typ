@@ -1,9 +1,9 @@
-#import "tools/headings.typ": headings, structural-heading-titles
+#import "tools/headings.typ": set-heading-titles, structural-heading-titles
 #import "tools/annexes.typ": is-heading-in-annex
 #import "tools/pageframe.typ": page-frame-sequence
-#import "tools/utils.typ": is-empty
+// #import "tools/utils.typ": is-empty
 #import "tools/base.typ": *
-
+#import "@preview/t4t:0.4.3":is-empty
 
 #let enum-set-heading-numbering(doc) = {
   set enum(
@@ -22,7 +22,7 @@
   doc
 }
 
-#let correctly-indent-list-and-enum-items(doc) = {
+#let set-correct-indent-list-and-enum-items(doc) = {
   let first-line-indent() = if type(par.first-line-indent) == dictionary {
     par.first-line-indent.amount
   } else {
@@ -105,7 +105,23 @@
 }
 
 #let style-ver-1(doc) = {
+  let header-counter = counter("header-all")
+  set page(margin: (left: 30mm, rest: 25mm))
   set text(lang: "ru", font: "Times New Roman", size: 13pt)
+  set heading(numbering: "1.1.1")
+  set list(marker: [–])
+  set ref(supplement: none)
+  set math.equation(numbering: "(1)")
+  set figure.caption(separator: " — ")
+
+  set par(
+    first-line-indent: (
+      amount: 1.25cm,
+      all: true,
+    ),
+    justify: true,
+  )
+
   show: set-base-style.with()
 
   show outline.entry: it => {
@@ -127,23 +143,6 @@
     }
   }
 
-  set heading(numbering: "1.1.1")
-
-  let header-counter = counter("header-all")
-
-  show: correctly-indent-list-and-enum-items
-
-  set page(margin: (left: 3cm, rest: 2cm))
-
-  set par(
-    first-line-indent: (
-      amount: 1.25cm,
-      all: true,
-    ),
-    justify: true,
-    // spacing: 1.5em,
-  )
-
   show heading: it => block(width: 100%)[
     #if not is-empty(it.numbering) {
       counter(heading).display(it.numbering) + [ ] + [#it.body]
@@ -152,23 +151,12 @@
 
   ]
 
-  show: headings
-
-  set ref(supplement: none)
-  set math.equation(numbering: "(1)")
   show image: set align(center)
-  set figure.caption(separator: " — ")
-  show figure.where(kind: image): set figure(supplement: [Рисунок])
-  show figure.where(kind: table): it => {
-    set figure.caption(position: top)
-    it
-  }
-
-  // show heading.where(level: 1): it => {
-  //   // pagebreak(weak: true)
+  show figure.where(kind: table): set figure.caption(position: top)
+  // show figure.where(kind: table): it => {
+  //   set figure.caption(position: top)
   //   it
   // }
-
 
   show figure: it => block(if it.has("caption") {
     show figure.caption: caption => {
@@ -183,8 +171,9 @@
     it
   })
 
-  set list(marker: [–])
 
+  show: set-heading-titles
+  show: set-correct-indent-list-and-enum-items
   show heading: it => {
     if it.level == 1 {
       (
@@ -195,13 +184,11 @@
             above: 12pt,
             below: 18pt,
             inset: 1mm,
-            radius: 2mm,
+            radius: 1mm,
           )
       )
     } else { it }
-    // it
     header-counter.step()
   }
-
   doc
 }
