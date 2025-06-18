@@ -1,3 +1,4 @@
+#import "utils.typ":is-empty
 #let table-multi-page(continue-header-label: [], continue-footer-label: [], ..table-args) = context {
   let columns = table-args.named().at("columns", default: 1)
   let column-amount = if type(columns) == int {
@@ -20,14 +21,14 @@
 
   show <table-footer>: footer => {
     table-part-counter.step()
-    context if table-part-counter.get() != table-part-counter.final() and label-has-content(continue-footer-label) {
+    context if table-part-counter.get() != table-part-counter.final() and not is-empty(continue-footer-label) {
       footer
     }
   }
 
   show <table-header>: header => {
     table-part-counter.step()
-    context if (table-part-counter.get().first() != 1) and label-has-content(continue-header-label) {
+    context if (table-part-counter.get().first() != 1) and not is-empty(continue-header-label) {
       header
     }
   }

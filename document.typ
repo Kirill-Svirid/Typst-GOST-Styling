@@ -31,7 +31,7 @@
 
 #set text(
   font: "Times new roman",
-  size: 10pt,
+  size: 13pt,
   lang: "ru",
 )
 
