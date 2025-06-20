@@ -4,7 +4,7 @@
 #import "src/style.typ": *
 #import "src/tools/outlines.typ": outline-break-by-enum
 #import "src/tools/enums.typ": *
-#import "src/tools/referencing.typ": document-append-defs, document-ref, document-base, document-get-mentioned
+#import "src/tools/referencing.typ": *
 #show: style-ver-1.with()
 
 
@@ -17,21 +17,21 @@
 // #let data = append-document-defs("/bibliography/references dev.yml", "/bibliography/references nor.yml")
 // #let data=yaml("bibliography/references dev.yml")
 #document-append-defs("/bibliography/references dev.yml", "/bibliography/references nor.yml")
-#let d = yaml("/bibliography/references test.yml")
-#let c = ()
-#type(c)
-#pagebreak()
----------
+// #toml("/bibliography/references dev.toml")
+// #pagebreak()
 #document-append-defs("/bibliography/references test.yml")
 
 // State of context is: #context document-base.final()
 // #data
-
 #outline()
 = Введение
+Элемент<el>
+#context link(query(label("el")).at(0).location(), [Ссылка])
+// #link(<el>,[Link])
 #show: enum-set-heading-numbering
 
 = Feature
+Простой текст со ссылкой на документ #document-ref("gost_r_iso_9001")
 
 == Требования к обеспечению безопасности при выполнении работ
 
@@ -76,7 +76,12 @@ This is a simple template for testing.
 
 Here's a simple equation:
 
+#let doc = context document-base.final().at("gost_r_8_563_2009")
 
+
+// #document-get-repr("gost_r_8_563_2009")
 
 = Заключение
-#document-get-mentioned()
+
+#document-display-group(inset: (top: 2mm, bottom: 2mm))
+// #document-get-mentioned()

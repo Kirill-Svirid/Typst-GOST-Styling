@@ -106,11 +106,12 @@
 
 #let style-ver-1(doc) = {
   let header-counter = counter("header-all")
-  set page(margin: (left: 30mm, rest: 25mm))
+  set page(margin: (left: 30mm, rest: 20mm))
   set text(lang: "ru", font: "Times New Roman", size: 13pt)
   set heading(numbering: "1.1.1")
   set list(marker: [–])
   set ref(supplement: none)
+
   set math.equation(numbering: "(1)")
   set figure.caption(separator: " — ")
 
@@ -150,13 +151,10 @@
     #v(1cm)
 
   ]
+  show link: set text(fill: eastern, weight: "semibold")
 
   show image: set align(center)
   show figure.where(kind: table): set figure.caption(position: top)
-  // show figure.where(kind: table): it => {
-  //   set figure.caption(position: top)
-  //   it
-  // }
 
   show figure: it => block(if it.has("caption") {
     show figure.caption: caption => {
