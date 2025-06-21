@@ -1,6 +1,6 @@
 *.pdf
 *.png
-
+sandbox
 
 !tests/**/*.pdf
 !tests/**/*.png

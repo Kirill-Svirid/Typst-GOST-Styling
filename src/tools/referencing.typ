@@ -15,7 +15,22 @@
   return true
 }
 
-#let document-compose-sort-key(item) = { }
+#let document-type-sort-prefix(key) = {
+  key = lower(key)
+  let case = (
+    (key.match(regex("^гост.*")), "000"),
+    (key.match(regex("^нп.*")), "010"),
+    (key.match(regex("^санпин.*")), "020"),
+    (key.match(regex("^сп.*")), "025"),
+    (key.match(regex("^ост.*")), "030"),
+    (key.match(regex("^стк.*")), "040"),
+    (key.match(regex("^сто.*")), "050"),
+    (key.match(regex("^ту.*")), "060"),
+    (true, "100"),
+  )
+  return case.find(it => it.at(0) != none).at(1)
+}
+
 
 #let document-read-definition(item) = {
   let document = (:)
@@ -64,6 +79,15 @@
     s.insert(document-name, document-label)
     return s
   })
+}
+
+// Предназначена для определения схемы сортировки документа
+#let document-get-sort-key(document-name) = context {
+  let item = document-base.final().at(document-name)
+  let type = item.at("type")
+  let name = item.at("name")
+  let prefix = document-type-sort-prefix(name)
+  return prefix + name
 }
 
 #let document-ref(document-name) = context {
@@ -120,6 +144,7 @@
   let mentions = document-mentions.final()
   let repr-array = mentions.keys()
   let header-array = mentions.values()
+  let sort-array = mentions.keys().map(document-get-sort-key)
   let a
   for (i, v) in header-array.enumerate() {
     a = header-array.at(i)
@@ -134,16 +159,15 @@
 
   table(
     inset: (top: 2mm, bottom: 2mm, rest: 0.5mm),
-    columns: (13.0cm, 1fr),
+    columns: (13.0cm, 1fr, 1fr),
     align: (x, y) => {
       if y == 0 { center + horizon } else if y > 0 and x == 0 { left + top } else { center + horizon }
     },
     row-gutter: (0.5mm, auto),
     ..table-args,
-    table.header(..table-header),
-    ..for (item, link) in repr-array.zip(header-array) {
-      // ([#item], [#numbering(link.first().numbering,..counter(heading).at(link.first().location())) ])
-      ([#document-get-repr(item)], [#link.join([, ])])
+    table.header(..table-header, [sort]),
+    ..for (item, link, sort) in repr-array.zip(header-array, sort-array) {
+      ([#document-get-repr(item)], [#link.join([, ])], [#sort])
     }
   )
 }
