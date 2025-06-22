@@ -1,6 +1,7 @@
 
 #let set-base-style(doc) = {
   set text(lang: "ru", font: "Times New Roman", size: 13pt)
+  // set text(lang: "ru",region: "RU", font: "newr", size: 13pt)
 
   set heading(numbering: "1.1.1")
   show heading: set text(hyphenate: false)

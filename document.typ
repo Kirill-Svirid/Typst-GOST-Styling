@@ -1,5 +1,5 @@
 #import "src/tools/pageframe.typ": (
-  main-page-frame,
+  page-frame-outline,
   page-frame-sequence,
   document-data,
   page-footer-sequence,
@@ -60,8 +60,8 @@
 #let is-odd-page() = calc.rem(counter(page).get().first(), 2) == 1
 #set page(
   header: context if is-odd-page() [odd] else [even] + " header",
-  footer: context if is-odd-page() [odd] else [even] +  " footer",
-  footer-descent: -3cm
+  footer: context if is-odd-page() [odd] else [even] + " footer",
+  footer-descent: -3cm,
 )
 
 #show outline.entry: it => outline-trim-by-prefix(it, direction: 0, prefix-number: 10)

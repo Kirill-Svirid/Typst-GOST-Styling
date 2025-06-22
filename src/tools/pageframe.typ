@@ -1,10 +1,12 @@
+#import "utils.typ": is-empty
 #let left_offset = 20mm
 #let main_offset = 5mm
 #let main_thickness = 0.5mm
-#let secondary_thickness = 0.2mm
+#let secondary_thickness = 0.15mm
 #let color-default = black
+#let font-frame-size = 11pt
 
-#let content-empty = label => not (label.has("children") and label.children.len() > 0 or label.has("text"))
+#let page-frame-counter = counter("page-frame")
 
 
 #let document-data = (
@@ -19,18 +21,6 @@
   "Версия": [],
 )
 
-#let tbl_inventory() = {
-  set text(size: 12pt)
-  table(
-    columns: (25mm, 35mm, 25mm, 25mm, 35mm),
-    rows: (5mm, 7mm),
-    inset: 0mm,
-    align: center + horizon,
-    stroke: main_thickness + color-default,
-    [Инв. № подл.], [Подп. и дата], [Взам. инв. №], [Инв. №дубл.], [Подп. и дата],
-    [], [], [], [], [],
-  )
-}
 
 // Секция таблицы для указания пользователей
 #let tbl-section-0(document-data: document-data) = {
@@ -38,10 +28,10 @@
   assert("Пров." in document-data.keys(), message: "Key error")
   assert("Н. контр." in document-data.keys(), message: "Key error")
   assert("Утв." in document-data.keys(), message: "Key error")
-  set text(size: 11pt)
+  set text(size: font-frame-size, stretch: 80%)
   table(
     columns: (17mm, 23mm, 15mm, 10mm),
-    stroke: secondary_thickness,
+    stroke: (thickness: main_thickness),
     align: center + horizon,
     inset: 0mm,
     rows: 5mm,
@@ -56,6 +46,23 @@
   )
 }
 
+// Секция для изменений
+#let tbl-section-4() = {
+  set text(size: font-frame-size, stretch: 80%)
+  table(
+    columns: (7mm, 10mm, 23mm, 15mm, 10mm),
+    stroke: (thickness: main_thickness),
+    align: center + horizon,
+    rows: 5mm,
+    inset: 0mm,
+    [], [], [], [], [],
+    table.hline(stroke: (thickness: secondary_thickness)),
+    [], [], [], [], [],
+    [Изм], [Лист], [№ докум.], [Подп.], [Дата],
+  )
+}
+
+
 // Секция таблицы для указания обозначения и версии
 #let tbl-section-1(document-data: document-data, page-current: []) = {
   let schema = (120mm,)
@@ -63,12 +70,12 @@
   assert("Обозначение" in document-data.keys(), message: "Key error")
   assert("Версия" in document-data.keys(), message: "Key error")
 
-  let content = (document-data.at("Обозначение"),)
+  let designation = (document-data.at("Обозначение"),)
 
-  if not content-empty(document-data.at("Версия")) {
+  if not is-empty(document-data.at("Версия")) {
     schema.at(0) = schema.at(0) - 10mm
     schema.push(10mm)
-    content.push(
+    designation.push(
       table(
         rows: (5mm, 10mm),
         columns: 10mm,
@@ -78,10 +85,10 @@
       ),
     )
   }
-  if not content-empty(page-current) {
+  if not is-empty(page-current) {
     schema.at(0) = schema.at(0) - 10mm
     schema.push(10mm)
-    content.push(
+    designation.push(
       table(
         rows: (5mm, 10mm),
         inset: 0mm,
@@ -97,19 +104,21 @@
     columns: schema,
     inset: 0mm,
     rows: 15mm,
-    ..content
+    ..designation
   )
 }
 
 // Секция для организации и номеров страниц
 #let tbl-section-2(document-data: document-data, page-current: [], page-total: []) = {
   assert("Организация" in document-data.keys(), message: "Key error")
-  set text(size: 12pt)
+  set text(size: font-frame-size)
   table(
     align: center + horizon,
     stroke: main_thickness,
     columns: (5mm, 5mm, 5mm, 15mm, 20mm),
+    inset: 0mm,
     rows: (5mm, 5mm, 15mm),
+    row-gutter: 0mm,
     table.cell(colspan: 3, [Лит.]), [Лист], [Листов],
     [], [], [], page-current, page-total,
     table.cell(colspan: 5, document-data.at("Организация"))
@@ -118,37 +127,25 @@
 
 // Секция для названия
 #let tbl-section-3(document-data: document-data) = {
-  set text(size: 12pt)
+  set text(size: font-frame-size)
   table(
     stroke: main_thickness,
+    inset: 0mm,
+    row-gutter: 0mm,
     columns: 70mm,
     rows: 25mm,
     [],
   )
 }
 
-// Секция для изменений
-#let tbl-section-4() = {
-  set text(size: 12pt)
-  table(
-    columns: (7mm, 10mm, 23mm, 15mm, 10mm),
-    stroke: main_thickness + color-default,
-    rows: 5mm,
-    inset: 0mm,
-    align: center + horizon,
-    [], [], [], [], [],
-    table.hline(stroke: secondary_thickness),
-    [], [], [], [], [],
-    scale(x: 85%, [Изм]), [Лист], [№ докум.], [Подп.], [Дата],
-  )
-}
 
 // Секция для указания применений
 #let tbl-section-5(document-data: document-data) = {
-  set text(size: 11pt)
+  set text(size: font-frame-size)
   table(
     columns: (60mm, 60mm),
     rows: (5mm, 7mm),
+    row-gutter: 0mm,
     stroke: main_thickness + color-default,
     inset: 0mm,
     align: center + horizon,
@@ -156,6 +153,34 @@
     [], [],
   )
 }
+// Секция для обозначения копии и формата
+#let tbl-section-6() = {
+  set text(size: font-frame-size, stretch: 80%)
+  table(
+    columns: (100mm, 50mm),
+    stroke: none,
+    row-gutter: 0mm,
+    rows: 5mm,
+    inset: 0mm,
+    align: (horizon + center),
+    [Копировал], [Формат A4],
+  )
+}
+
+// Секция таблицы для указания инвентарных номеров
+#let tbl_section-7() = {
+  set text(size: font-frame-size, stretch: 80%)
+  table(
+    columns: (25mm, 35mm, 25mm, 25mm, 35mm),
+    rows: (5mm, 7mm),
+    inset: 0mm,
+    align: center + horizon,
+    stroke: main_thickness + color-default,
+    [Инв. № подл.], [Подп. и дата], [Взам. инв. №], [Инв. №дубл.], [Подп. и дата],
+    [], [], [], [], [],
+  )
+}
+
 
 #let first-page-frame(title) = {
   context {
@@ -244,18 +269,29 @@
   }
 }
 
-#let main-page-frame(document-data: document-data) = {
+#let page-frame-title() = context {
+  let width = page.width
+  let height = page.height
+  place(
+    bottom,
+    rotate(-90deg, tbl_section-7(), reflow: true),
+    dx: left_offset - 12mm,
+    dy: -main_offset,
+  )
+  page-outer-frame()
+}
+
+
+
+#let page-frame-outline(document-data: document-data) = {
   context {
-    let page-counter = counter("page")
-    page-counter.step()
+    page-frame-counter.step()
     let width = page.width
     let height = page.height
-    // first-page-bar-grid(str(page-counter.get().first()))
-    // second-page-bar-grid(document-data:document-data)
     first-page-bar-grid(document-data: document-data)
     place(
       bottom,
-      rotate(-90deg, tbl_inventory(), reflow: true),
+      rotate(-90deg, tbl_section-7(), reflow: true),
       dx: left_offset - 12mm,
       dy: -main_offset,
     )
@@ -265,70 +301,43 @@
       dx: left_offset - 12mm,
       dy: -main_offset - 287mm + 120mm,
     )
+    place(
+      bottom + right,
+      tbl-section-6(),
+      dx: -main_offset,
+      dy: 0mm,
+    )
   }
   page-outer-frame()
 }
 
-#let second-page-frame(document-data: document-data) = {
+
+
+#let page-frame-other(document-data: document-data) = {
   context {
     let width = page.width
     let height = page.height
     second-page-bar-grid(document-data: document-data)
     place(
       bottom,
-      rotate(-90deg, tbl_inventory(), reflow: true),
+      rotate(-90deg, tbl_section-7(), reflow: true),
       dx: left_offset - 12mm,
       dy: -main_offset,
+    )
+    place(
+      bottom + right,
+      tbl-section-6(),
+      dx: -main_offset,
+      dy: 0mm,
     )
   }
   page-outer-frame()
 }
 
 #let page-frame-sequence(document-data: document-data) = context {
-  let (count,) = counter("page").get()
-  if count == 0 {
-    main-page-frame(document-data: document-data)
+  if page-frame-counter.get().first() == 0 {
+    page-frame-outline(document-data: document-data)
   } else {
-    second-page-frame(document-data: document-data)
+    page-frame-other(document-data: document-data)
   }
 }
-
-#let page-footer-sequence() = context {
-  let (count,) = counter("page").get()
-  [#count]
-  if count == 0 {
-    h(5cm)
-    [text]
-  }
-}
-
-#let page-layout-sequence(body) = {
-  context {
-    let (count,) = counter("page").get()
-    set page(margin: (left:3cm),footer: [ #count ])
-
-    body
-  }
-}
-
-
-
-// #let page-frame-sequence(document-data: document-data, body) =context  {
-//     let page-counter = counter("page")
-//     page-counter.step()
-//     if page-counter.get().first() == 0 {
-//       set page(
-//         background: main-page-frame(document-data: document-data),
-//       )
-//       // main-page-frame(document-data: document-data)
-//     } else {
-//       set page(
-//         background:second-page-frame(document-data: document-data),
-//       )
-//       // second-page-frame(document-data: document-data)
-//     }
-//   body
-// }
-
-
-#let title-page-frame() = { }

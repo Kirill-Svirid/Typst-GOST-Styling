@@ -1,4 +1,4 @@
-#import "src/tools/pageframe.typ": page-frame-sequence, document-data
+#import "src/tools/pageframe.typ": *
 #import "src/tools/numbering.typ": heading-numbering-ru, enum-numbering
 #import "src/tools/table-tools.typ": table-multi-page
 #import "src/style.typ": *
@@ -9,7 +9,35 @@
 
 
 #show: enable-referenceable-enums.with()
-#set page(background: page-frame-sequence())
+#set page(background: page-frame-title(), margin: (top: 5cm))
+
+#place(top, rect([text], height: 4cm, width: 100%), dy: -3cm, float: true, clearance: -2cm)
+
+
+#grid(
+  columns: (10cm, 1fr),
+  rows: 20mm,
+  stroke: black,
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+  [], [],
+)
+
+#pagebreak()
+
+#pagebreak()
+#set page(background: page-frame-sequence(),margin: (top: 2cm))
 
 #show outline.entry: outline-break-by-enum.with(0)
 #let test-state = state("test", ())
@@ -28,9 +56,9 @@
 
 == Требования к обеспечению безопасности при выполнении работ
 
-+ На всех этапах работ должно быть #document-ref("ГОСТ_Р_8_563") обеспечено соблюдение норм и правил, регламентирующих безопасность в области использования атомной энергии с учётом конструктивных и физических особенностей РУ и АЭС.
++ На всех этапах работ должно быть #document-ref("ГОСТ_Р_8_563") обеспечено соблюдение норм и правил, регламентирующих безопасность в области использования атомной энергии с учётом конструктивных и физических особенностей РУ и АЭС. Документ #document-ref("test_pz_0001")
 
-+ Эксперименты на стендах должны проводиться в соответствии с правилами ядерной и технической безопасности.#document-ref("ГОСТ_Р_8_563")
++ Эксперименты на стендах должны проводиться в соответствии с правилами ядерной и технической безопасности #document-ref("ГОСТ_Р_8_563")
 
 == Требования по обеспечению государственной тайны при выполнении НИР и ОКР
 
@@ -38,7 +66,7 @@
 
 + #enum-label[reaf] Разработка ТВС должна выполняться с учётом обеспечения технологичности конструкций составных частей, обеспеченности сырьём и исходными материалами, а также с максимально возможным уровнем унификации.
 
-+ Изготовление и сборка элементов а.з. должна проводиться в соответствии с СТО 95 12076.#document-ref("ГОСТ_Р_8_563") #document-ref("ГОСТ_Р_15_011")
++ Изготовление и сборка элементов а.з. должна проводиться в соответствии с #document-ref("СТО_95_12076"),#document-ref("ГОСТ_Р_8_563"), #document-ref("ГОСТ_Р_15_011")
 
 #show: enum-drop-heading-numbering
 
@@ -67,34 +95,24 @@
 
 This is a simple template for testing. #document-ref("СТК-5")
 
-Here's a simple equation: #document-ref("test_tz_0000")
+#lorem(25) #document-ref("test_tz_0000")
 
 #let doc = context document-base.final().at("ГОСТ_Р_8_563")
 
 
-// #document-get-repr("gost_r_8_563_2009")
-
 = Заключение
 
-// #cite(<brest_km_tz_1499>)
 
-#document-display-group(document-type: "legislation", inset: (top: 2mm, bottom: 2mm))
+
+#document-table-place(document-type: "legislation", header: header-legislation)
 
 #pagebreak()
 
+#document-table-place(document-type: "reference", header: header-developed)
 
-#document-display-group(
-  document-type: "reference",
-  header: header-developed,
-  inset: (
-    top: 2mm,
-    bottom: 2mm,
-  ),
-)
-
-#bibliography(
-  // "/bibliography/references nor.yml",
-  "/bibliography/references dev.yml",
-  full: true,
-  style: "gost-r-705-2008-numeric",
-)
+// #bibliography(
+//   // "/bibliography/references nor.yml",
+//   "/bibliography/references dev.yml",
+//   full: true,
+//   style: "gost-r-705-2008-numeric",
+// )

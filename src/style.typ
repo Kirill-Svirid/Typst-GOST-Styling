@@ -106,7 +106,7 @@
 #let style-ver-1(doc) = {
   let header-counter = counter("header-all")
   set page(margin: (left: 30mm, rest: 20mm))
-  set text(lang: "ru", font: "Times New Roman", size: 13pt)
+  set text(lang: "ru", font: "Lucida Console", size: 13pt)
   set heading(numbering: "1.1.1")
   set list(marker: [–])
   set ref(supplement: none)
