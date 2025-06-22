@@ -1,21 +1,21 @@
 #import "@preview/t4t:0.4.3"
-#let document-type-list = ("normative", "developed")
+#let document-type-list = ("legislation", "reference")
 #let document-base = state("document-base", (:))
 #let document-mentions = state("document-mentions", (:))
 #let document-backlinks = state("document-backlinks", (:))
 
-#let is-document-valid(item) = {
+#let _is-document-valid(item) = {
   if type(item) != dictionary { return false }
   if not "type" in item.keys() { return false }
   if not "name" in item.keys() { return false }
   if not "title" in item.keys() { return false }
-  if "year" in item.keys() {
-    if type(item.at("year")) != int { return false }
+  if "date" in item.keys() {
+    if type(item.at("date")) != int { return false }
   }
   return true
 }
 
-#let document-type-sort-prefix(key) = {
+#let _document-type-sort-prefix(key) = {
   key = lower(key)
   let case = (
     (key.match(regex("^гост.*")), "000"),
@@ -32,16 +32,25 @@
 }
 
 
-#let document-read-definition(item) = {
+#let _document-read-definition(lbl, item) = {
   let document = (:)
+  document.insert("label", lbl)
   document.insert("title", item.at("title", default: ""))
-  document.insert("name", item.at("name", default: ""))
-  document.insert("year", item.at("year", default: 0))
-  if item.at("type") not in document-type-list {
-    document.insert("type", document-type-list.at(0))
-  } else {
-    document.insert("type", item.at("type", default: ""))
-  }
+  document.insert("name", item.at("name", default: none))
+  document.insert("organization", item.at("organization", default: none))
+  assert(type(item.at("name")) == str, message: "Тип поля имя должен быть")
+
+  assert(
+    type(item.at("date")) in (int, datetime),
+    message: "Дата должна или целым числом или выражением типа (datetime)",
+  )
+  assert(
+    item.at("type") in document-type-list,
+    message: "Неподдерживаемый тип документа. Поддерживаемые типы:" + repr(document-type-list),
+  )
+  document.insert("type", item.at("type"))
+  document.insert("date", item.at("date", default: none))
+
   return document
 }
 
@@ -49,10 +58,16 @@
   let docs-def
   let docs = (:)
   for path in paths.pos() {
-    docs-def = (yaml(path))
+    path = lower(path)
+    if path.ends-with("yaml") or path.ends-with("yml") { docs-def = yaml(path) } else if path.ends-with("toml") {
+      docs-def = toml(path)
+    } else {
+      panic("Объявлен неподдерживаемый тип файла. Поддерживаемые форматы: [YAML, TOML, JSON]")
+    }
+
     for (k, v) in docs-def {
-      if not is-document-valid(v) { continue }
-      docs.insert(k, document-read-definition(v))
+      if not _is-document-valid(v) { continue }
+      docs.insert(k, _document-read-definition(k, v))
     }
   }
   document-base.update(s => {
@@ -62,35 +77,39 @@
 }
 
 // Предназначена для определения схемы представления документа
-#let document-get-repr(document-name) = context {
-  let item = document-base.final().at(document-name)
-  let type = item.at("type")
-  let title = item.at("title")
-  let name = item.at("name")
-  let year = item.at("year")
-  let document-label = label("_link_" + document-name)
-  [#name#document-label] + [\-#year #title]
+#let document-get-repr(document) = {
+  let lbl = document.at("label")
+  let type = document.at("type")
+  let title = document.at("title")
+  let name = document.at("name")
+  let date = document.at("date")
+  let organization = document.at("organization", default: none)
+
+  let document-label = label("_link_" + lbl)
+  [#metadata("")#document-label] + if organization != none [#{ organization }. ] + [#name] + [\-#date #title]
 
   document-backlinks.update(s => {
     assert(
-      document-name not in s.keys(),
+      label not in s.keys(),
       message: "Функция не может быть вызвана дважды для одного документа",
     )
-    s.insert(document-name, document-label)
+    s.insert(lbl, document-label)
     return s
   })
 }
 
 // Предназначена для определения схемы сортировки документа
-#let document-get-sort-key(document-name) = context {
-  let item = document-base.final().at(document-name)
+#let document-get-sort-key(document-name) = {
+  let item = document-base.final().at(document-name, default: none)
+  if item == none { panic("Документ не обнаружен:" + document-name) }
   let type = item.at("type")
   let name = item.at("name")
-  let prefix = document-type-sort-prefix(name)
+  let prefix = _document-type-sort-prefix(name)
   return prefix + name
 }
 
-#let document-ref(document-name) = context {
+// Предназначена для объявления документа по тексту
+#let document-ref(document-name, repr-function: none, year-last-two: false) = context {
   let headings = query(heading.where(level: 2).or(heading.where(level: 1)).before(here()))
   headings = headings.filter(it => it.numbering != none)
   assert(
@@ -117,57 +136,94 @@
   let document-inline
 
   let v = document-base.final().at(document-name, default: none)
-  if v != none {
-    document-inline = v.name
-  }
+  if v != none { document-inline = v.name }
 
-  if backlink != none { link(backlink, [ #document-inline]) } else {
-    [#document-inline]
-  }
+  if backlink != none { link(backlink, [ #document-inline]) } else { [#document-inline] }
 }
 
 #let document-get-mentioned() = {
   context document-mentions.final()
 }
 
-#let document-display-group(type: document-type-list.at(0), ..table-args) = context {
-  let header-normative = (
-    [Обозначение, наименование документа, на который дана ссылка],
-    [Номер раздела, подраздела, приложения документа, в котором дана ссылка],
-  )
-  let header-developed = (
-    [Наименование организации, обозначение документа, наименование изделия, вид и инвентарный номер документа, на который дана ссылка],
-    [Номер раздела, подраздела, приложения документа, в котором дана ссылка],
-  )
+#let header-legislation = (
+  [Обозначение, наименование документа, на который дана ссылка],
+  [Номер раздела, подраздела, приложения документа, в котором дана ссылка],
+)
+#let header-developed = (
+  [Наименование организации, обозначение документа, наименование изделия, вид и инвентарный номер документа, на который дана ссылка],
+  [Номер раздела, подраздела, приложения документа, в котором дана ссылка],
+)
 
-  let table-header = if type == "normative" { header-normative } else { header-developed }
+
+// Позволяет получить массив данных для отображения в финальной таблице ссылок
+#let document-get-display-array(document-type, sort-by-type) = context {
   let mentions = document-mentions.final()
-  let repr-array = mentions.keys()
+  let base = document-base.final()
+
+  let label-array = mentions.keys()
   let header-array = mentions.values()
   let sort-array = mentions.keys().map(document-get-sort-key)
-  let a
+
   for (i, v) in header-array.enumerate() {
-    a = header-array.at(i)
+    header-array.at(i) = v
+      .map(h => link(
+        h.location(),
+        [#numbering(h.numbering, ..counter(heading).at(h.location()))],
+      ))
+      .join([, ])
+  }
+
+  let table-data = label-array.zip(header-array, sort-array)
+  table-data = table-data.filter(it => { base.at(it.at(0)).at("type") == document-type })
+  if sort-by-type {
+    table-data = table-data.sorted(key: it => it.at(2))
+  }
+}
+
+
+#let document-display-group(document-type: "legislation", header: header-legislation, ..table-args) = context {
+  assert(
+    type(header) == array and header.len() == 2,
+    message: "Заголовок таблицы должен быть массивом с двумя элементами.",
+  )
+  let mentions = document-mentions.final()
+  let base = document-base.final()
+
+  let label-array = mentions.keys()
+  let header-array = mentions.values()
+  let sort-array = mentions.keys().map(document-get-sort-key)
+
+  for (i, v) in header-array.enumerate() {
     header-array.at(i) = v.map(h => link(
       h.location(),
       [#numbering(h.numbering, ..counter(heading).at(h.location()))],
     ))
   }
 
-  show table.cell.where(y: 0): set text(size: 12pt, hyphenate: false)
-  show table: set par(justify: false)
+  let table-data = label-array.zip(header-array, sort-array)
+  table-data = table-data.filter(it => { base.at(it.at(0)).at("type") == document-type })
+  table-data = table-data.sorted(key: it => it.at(2))
+
+  show table.cell.where(y: 0): it => {
+    set text(size: 12pt, hyphenate: false)
+    set par(justify: false)
+    it
+  }
 
   table(
     inset: (top: 2mm, bottom: 2mm, rest: 0.5mm),
-    columns: (13.0cm, 1fr, 1fr),
+    columns: (13.0cm, 1fr),
     align: (x, y) => {
       if y == 0 { center + horizon } else if y > 0 and x == 0 { left + top } else { center + horizon }
     },
     row-gutter: (0.5mm, auto),
+    table.header(..header),
     ..table-args,
-    table.header(..table-header, [sort]),
-    ..for (item, link, sort) in repr-array.zip(header-array, sort-array) {
-      ([#document-get-repr(item)], [#link.join([, ])], [#sort])
+    ..for (item, link, sort) in table-data {
+      (
+        [#document-get-repr(base.at(item))],
+        [#link.join([, ])],
+      )
     }
   )
 }

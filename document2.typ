@@ -14,30 +14,23 @@
 #show outline.entry: outline-break-by-enum.with(0)
 #let test-state = state("test", ())
 
-// #let data = append-document-defs("/bibliography/references dev.yml", "/bibliography/references nor.yml")
-// #let data=yaml("bibliography/references dev.yml")
 #document-append-defs("/bibliography/references dev.yml", "/bibliography/references nor.yml")
-// #toml("/bibliography/references dev.toml")
-// #pagebreak()
-#document-append-defs("/bibliography/references test.yml")
 
-// State of context is: #context document-base.final()
-// #data
+// #document-append-defs("/bibliography/references test.yml")
+
+
 #outline()
 = Введение
-Элемент<el>
-#context link(query(label("el")).at(0).location(), [Ссылка])
-// #link(<el>,[Link])
 #show: enum-set-heading-numbering
 
 = Feature
-Простой текст со ссылкой на документ #document-ref("gost_r_iso_9001")
+Простой текст со ссылкой на документ #document-ref("ГОСТ_Р_ИСО_9001") и #document-ref("СТО_95_12076")
 
 == Требования к обеспечению безопасности при выполнении работ
 
-+ На всех этапах работ должно быть #document-ref("gost_r_8_563_2009") обеспечено соблюдение норм и правил, регламентирующих безопасность в области использования атомной энергии с учётом конструктивных и физических особенностей РУ и АЭС.
++ На всех этапах работ должно быть #document-ref("ГОСТ_Р_8_563") обеспечено соблюдение норм и правил, регламентирующих безопасность в области использования атомной энергии с учётом конструктивных и физических особенностей РУ и АЭС.
 
-+ Эксперименты на стендах должны проводиться в соответствии с правилами ядерной и технической безопасности.#document-ref("gost_r_8_563_2009")
++ Эксперименты на стендах должны проводиться в соответствии с правилами ядерной и технической безопасности.#document-ref("ГОСТ_Р_8_563")
 
 == Требования по обеспечению государственной тайны при выполнении НИР и ОКР
 
@@ -45,7 +38,7 @@
 
 + #enum-label[reaf] Разработка ТВС должна выполняться с учётом обеспечения технологичности конструкций составных частей, обеспеченности сырьём и исходными материалами, а также с максимально возможным уровнем унификации.
 
-+ Изготовление и сборка элементов а.з. должна проводиться в соответствии с СТО 95 12076.#document-ref("gost_r_8_563_2009") #document-ref("gost_r_15_012")
++ Изготовление и сборка элементов а.з. должна проводиться в соответствии с СТО 95 12076.#document-ref("ГОСТ_Р_8_563") #document-ref("ГОСТ_Р_15_011")
 
 #show: enum-drop-heading-numbering
 
@@ -64,24 +57,44 @@
 
 + На готовом изделии должны контролироваться параметры, указанные в 4.6.8.
 
-+ Требования к составным частям и комплектующим деталям ТВС, к их приёмке и входному контролю устанавливает разработчик ТВС.
++ Требования к составным частям и комплектующим деталям, к их приёмке и входному контролю устанавливает разработчик ТВС.
 
-+ Оценка соответствия ТВС должна осуществляться в форме испытаний, контроля и приёмки согласно требованиям НП-071. Результаты оценки соответствия в форме приёмки должны оформляться заключением о приёмке в порядке, установленном ГОСТ Р 50.06.01.
++ Оценка соответствия должна осуществляться в форме испытаний, контроля и приёмки согласно требованиям НП-071. Результаты оценки соответствия в форме приёмки должны оформляться заключением о приёмке в порядке, установленном ГОСТ Р 50.06.01.
 
 Дополнение
 
 = Feature
 
-This is a simple template for testing.
+This is a simple template for testing. #document-ref("СТК-5")
 
-Here's a simple equation:
+Here's a simple equation: #document-ref("test_tz_0000")
 
-#let doc = context document-base.final().at("gost_r_8_563_2009")
+#let doc = context document-base.final().at("ГОСТ_Р_8_563")
 
 
 // #document-get-repr("gost_r_8_563_2009")
 
 = Заключение
 
-#document-display-group(inset: (top: 2mm, bottom: 2mm))
-// #document-get-mentioned()
+// #cite(<brest_km_tz_1499>)
+
+#document-display-group(document-type: "legislation", inset: (top: 2mm, bottom: 2mm))
+
+#pagebreak()
+
+
+#document-display-group(
+  document-type: "reference",
+  header: header-developed,
+  inset: (
+    top: 2mm,
+    bottom: 2mm,
+  ),
+)
+
+#bibliography(
+  // "/bibliography/references nor.yml",
+  "/bibliography/references dev.yml",
+  full: true,
+  style: "gost-r-705-2008-numeric",
+)

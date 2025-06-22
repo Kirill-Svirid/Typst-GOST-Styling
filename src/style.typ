@@ -1,7 +1,6 @@
 #import "tools/headings.typ": set-heading-titles, structural-heading-titles
 #import "tools/annexes.typ": is-heading-in-annex
 #import "tools/pageframe.typ": page-frame-sequence
-// #import "tools/utils.typ": is-empty
 #import "tools/base.typ": *
 #import "@preview/t4t:0.4.3":is-empty
 
@@ -149,9 +148,8 @@
       counter(heading).display(it.numbering) + [ ] + [#it.body]
     } else { it }
     #v(1cm)
-
   ]
-  show link: set text(fill: eastern, weight: "semibold")
+  show link: set text(fill: eastern, weight: "medium")
 
   show image: set align(center)
   show figure.where(kind: table): set figure.caption(position: top)

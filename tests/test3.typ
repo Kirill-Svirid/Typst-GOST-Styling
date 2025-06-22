@@ -1,4 +1,4 @@
-#let arr2 = range(0, 100,step:5)
+#let arr2 = range(0, 100, step: 5)
 #let arr1 = range(0, -10, step: -1)
 #let arr4 = range(0, -20, step: -2)
 
@@ -7,11 +7,10 @@
 }
 
 #let keysort2(..args) = {
-  let arg-arr=args.pos()
+  let arg-arr = args.pos()
   arg-arr.remove(0)
   // return calc.pow(args.pos().at(0), 2)  // + calc.min(args.pos())
-  return  arg-arr.sum()
-
+  return arg-arr.sum()
 }
 
 #let arr3 = arr2.zip(arr1, arr4)
@@ -23,4 +22,8 @@
 
 
 // #range(1, 20).fold(0, (a, b) => a + b)
-#arr3.sorted(key:key=>keysort2(..key))
+#arr3.sorted(key: key => keysort2(..key))
+
+#let f(a) = { return a * a }
+
+#type(f)

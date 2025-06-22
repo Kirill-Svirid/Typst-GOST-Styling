@@ -11,7 +11,7 @@
   performer-list: [Список исполнителей],
   reference-list-gen: [Список использованных источников],
   reference-list-docs: [Ссылочные документы],
-  reference-list-normative-docs: [Ссылочные нормативные документы],
+  reference-list-legislation-docs: [Ссылочные нормативные документы],
   reference-list-bibliography: [Библиография],
 )
 

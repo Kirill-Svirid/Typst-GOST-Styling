@@ -17,14 +17,19 @@
 #let annexes(content) = {
   set heading(
     numbering: heading-numbering-ru,
-    hanging-indent: 0pt
+    hanging-indent: 0pt,
   )
 
   show heading: set align(center)
   show heading: it => {
-    assert(it.numbering != none, message: "В приложениях не может быть структурных заголовков или заголовков без нумерации")
+    assert(
+      it.numbering != none,
+      message: "В приложениях не может быть структурных заголовков или заголовков без нумерации",
+    )
     counter("annex").step()
-    block[#upper([приложение]) #numbering(it.numbering, ..counter(heading).at(it.location())) \ #text(weight: "medium")[#it.body]]
+    block[#upper([приложение]) #numbering(it.numbering, ..counter(heading).at(it.location())) \ #text(
+        weight: "medium",
+      )[#it.body]]
   }
 
   show heading.where(level: 1): it => context {
@@ -35,15 +40,19 @@
     it
   }
 
-  set figure(numbering: it => {
-    let current-heading =context counter(heading).get()
-    get-element-numbering(current-heading, it)
-  })
+  set figure(
+    numbering: it => {
+      let current-heading = context counter(heading).get()
+      get-element-numbering(current-heading, it)
+    },
+  )
 
-  set math.equation(numbering: it => {
-    let current-heading = counter(heading).get()
-    [(#get-element-numbering(current-heading, it))]
-  })
+  set math.equation(
+    numbering: it => {
+      let current-heading = counter(heading).get()
+      [(#get-element-numbering(current-heading, it))]
+    },
+  )
 
   state("annexes").update(true)
   counter(heading).update(0)
