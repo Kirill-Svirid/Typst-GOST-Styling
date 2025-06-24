@@ -4,54 +4,34 @@
 #import "src/style.typ": *
 #import "src/tools/outlines.typ": outline-break-by-enum
 #import "src/tools/enums.typ": *
+#import "src/tools/annexes.typ" as an
 #import "src/tools/referencing.typ": *
+
 #show: style-ver-1.with()
-
-
 #show: enable-referenceable-enums.with()
+#show outline.entry: outline-break-by-enum.with(0)
+
 #set page(background: page-frame-title(), margin: (top: 5cm))
 
-#place(top, rect([text], height: 4cm, width: 100%), dy: -3cm, float: true, clearance: -2cm)
-
-
-#grid(
-  columns: (10cm, 1fr),
-  rows: 20mm,
-  stroke: black,
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-  [], [],
-)
-
 #pagebreak()
 
-#pagebreak()
-#set page(background: page-frame-sequence(),margin: (top: 2cm))
-
-#show outline.entry: outline-break-by-enum.with(0)
-#let test-state = state("test", ())
+#set page(background: page-frame-sequence(), margin: (top: 2cm))
 
 #document-append-defs("/bibliography/references dev.yml", "/bibliography/references nor.yml")
 
-// #document-append-defs("/bibliography/references test.yml")
 
+// #docs111.test_tz_0000
 
 #outline()
+
 = Введение
+
+// #context document-base.final()
+
 #show: enum-set-heading-numbering
 
 = Feature
+
 Простой текст со ссылкой на документ #document-ref("ГОСТ_Р_ИСО_9001") и #document-ref("СТО_95_12076")
 
 == Требования к обеспечению безопасности при выполнении работ
@@ -89,7 +69,7 @@
 
 + Оценка соответствия должна осуществляться в форме испытаний, контроля и приёмки согласно требованиям НП-071. Результаты оценки соответствия в форме приёмки должны оформляться заключением о приёмке в порядке, установленном ГОСТ Р 50.06.01.
 
-Дополнение
+Дополнение #document-ref("test_pz_0001")
 
 = Feature
 
@@ -102,13 +82,32 @@ This is a simple template for testing. #document-ref("СТК-5")
 
 = Заключение
 
+#show: an.annexes.with()
 
+= Схема 1
 
-#document-table-place(document-type: "legislation", header: header-legislation)
+#lorem(50)
+
++ Тест ссылок на документы в разделе приложения #document-ref("СТО_95_12076"),#document-ref("ГОСТ_Р_8_563"), #document-ref("ГОСТ_Р_15_011")
+
 
 #pagebreak()
 
-#document-table-place(document-type: "reference", header: header-developed)
+
+#document-display-table(document-type: "legislation", header: header-legislation)
+
+#pagebreak()
+
+// #document-display-table(document-type: "reference", header: header-reference)
+
+#show: enum-drop-heading-numbering
+
+
+#document-display-list()
+
+
+
+// #context document-referenced-types.get()
 
 // #bibliography(
 //   // "/bibliography/references nor.yml",

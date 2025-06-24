@@ -4,15 +4,9 @@ version = "0.1.0"
 entrypoint = "src/lib.typ"
 authors = ["Kirill Svirid <svirid-kirill97@yandex.ru>"]
 description = "Template for styling technical documents according to GOST standards"
-repository = "https://github.com/typst-g7-32/modern-g7-32"
+repository = "https://github.com/Kirill-Svirid/Typst-GOST-Styling.git"
 keywords = ["gost", "technical", "document", "russian"]
-categories = [ "components", "scripting", "model"]
-disciplines = ["engineering","design"]
-compiler = "0.13.1"
+categories = ["components", "scripting", "model"]
+disciplines = ["engineering", "design"]
+compiler = "0.13.0"
 exclude = [".github", "docs", "tests", "assets"]
-
-# [template]
-# path = "template"
-# entrypoint = "main.typ"
-# thumbnail = ""
-

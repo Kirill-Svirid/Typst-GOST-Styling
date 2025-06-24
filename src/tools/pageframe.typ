@@ -24,14 +24,20 @@
 
 // Секция таблицы для указания пользователей
 #let tbl-section-0(document-data: document-data) = {
-  assert("Разраб" in document-data.keys(), message: "Key error")
-  assert("Пров." in document-data.keys(), message: "Key error")
-  assert("Н. контр." in document-data.keys(), message: "Key error")
-  assert("Утв." in document-data.keys(), message: "Key error")
+  // assert("Разраб" in document-data.keys(), message: "Key error")
+  // assert("Пров." in document-data.keys(), message: "Key error")
+  // assert("Н. контр." in document-data.keys(), message: "Key error")
+  // assert("Утв." in document-data.keys(), message: "Key error")
+  let fields-required = ("Разраб", "Пров.", "Н. контр.", "Утв.")
+  // assert(
+  //   document-data.keys().all(it => fields-required.contains(it)),
+  //   message: "Объект document-data должен содержать поля:" + repr(fields-required),
+  // )
+
   set text(size: font-frame-size, stretch: 80%)
   table(
     columns: (17mm, 23mm, 15mm, 10mm),
-    stroke: (thickness: main_thickness),
+    stroke: (thickness: secondary_thickness),
     align: center + horizon,
     inset: 0mm,
     rows: 5mm,

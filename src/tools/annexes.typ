@@ -21,13 +21,15 @@
   )
 
   show heading: set align(center)
+  set heading(supplement: [Приложение])
   show heading: it => {
     assert(
       it.numbering != none,
       message: "В приложениях не может быть структурных заголовков или заголовков без нумерации",
     )
+    pagebreak()
     counter("annex").step()
-    block[#upper([приложение]) #numbering(it.numbering, ..counter(heading).at(it.location())) \ #text(
+    block[#it.supplement #numbering(it.numbering, ..counter(heading).at(it.location())) \ #text(
         weight: "medium",
       )[#it.body]]
   }

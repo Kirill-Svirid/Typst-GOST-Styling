@@ -2,7 +2,7 @@
 #import "tools/annexes.typ": is-heading-in-annex
 #import "tools/pageframe.typ": page-frame-sequence
 #import "tools/base.typ": *
-#import "@preview/t4t:0.4.3":is-empty
+#import "@preview/t4t:0.4.3": is-empty
 
 #let enum-set-heading-numbering(doc) = {
   set enum(
@@ -107,7 +107,7 @@
   let header-counter = counter("header-all")
   set page(margin: (left: 30mm, rest: 20mm))
   set text(lang: "ru", font: "Lucida Console", size: 13pt)
-  set heading(numbering: "1.1.1")
+  set heading(numbering: "1.1.1", supplement: none)
   set list(marker: [–])
   set ref(supplement: none)
 
