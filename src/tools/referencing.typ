@@ -149,6 +149,7 @@
         s.insert(k, k)
         return s
       })
+      [#metadata(k)#label(k)]
     }
   }
 
@@ -181,35 +182,34 @@
   )
 
   assert(
-    type(document-item) in (str, content, dictionary),
-    message: "Поле (document-name) должно быть строкой, контентом или словарем",
+    type(document-item) in (str, content, dictionary, label),
+    message: "Тип поля (document-item) должно быть строкой, контентом, словарем или label",
   )
-
-  if type(document-item) == dictionary {
-    assert(
-      _is-document-valid(document-item),
-      message: "Элемент невалиден." + repr(document-item),
-    )
-    document-item = document-item.at("label")
+  let document-label
+  if type(document-item) == str {
+    document-label = document-item
+  } else if type(document-item) == label {
+    document-label = query(document-item).first().value
   }
+  // assert(type(document-label) == str, message: repr(type(document-label)))
 
   if headings.len() > 0 and headings.last().numbering != none {
     document-base.update(s => {
-      s.at(document-item).at("headings").push(headings.last())
+      s.at(document-label).at("headings").push(headings.last())
       return s
     })
   }
 
   if repr-func != none {
     document-base.update(s => {
-      s.at(document-item).at("repr-func") = repr-func
+      s.at(document-label).at("repr-func") = repr-func
       return s
     })
   }
 
   if flags != none {
     document-base.update(s => {
-      s.at(document-item).at("flags") = flags
+      s.at(document-label).at("flags") = flags
       return s
     })
   }
@@ -217,7 +217,7 @@
   let header-parent = headings.last()
 
   document-mentions.update(s => {
-    let headers-mentioned = s.at(document-item, default: ())
+    let headers-mentioned = s.at(document-label, default: ())
     assert(
       type(headers-mentioned) == array,
       message: "Ссылки должны быть в виде массива локаций",
@@ -225,15 +225,15 @@
     if header-parent not in headers-mentioned {
       headers-mentioned.push(header-parent)
     }
-    s.insert(document-item, headers-mentioned)
+    s.insert(document-label, headers-mentioned)
     return s
   })
 
-  let backlink-item = document-backlinks.final().at(document-item, default: none)
+  let backlink-item = document-backlinks.final().at(document-label, default: none)
 
   let document-inline-value
 
-  let v = document-base.final().at(document-item, default: none)
+  let v = document-base.final().at(document-label, default: none)
   if v != none { document-inline-value = v.name }
 
   if backlink-item != none {
