@@ -26,4 +26,73 @@
 
 #let f(a) = { return a * a }
 
-#type(f)
+
+// #let s = "\"АО \"рога\"\""
+#let s = "'АО \"рога''"
+
+
+#s
+
+#s.matches(regex("^?(?:[\s]?)([\"])[^\s\"]"))
+
+#s.matches(regex("^?[^\s\"]([\"])(?:[\s]?)"))
+
+
+#pagebreak()
+
+#s.matches(regex("[\S]([\"])[\s$]?"))
+
+#let string-convert-dumb-quotes(s) = {
+  let m = s.matches(regex("^?(?:[\s]?)([\"\'])[^\s\"\']"))
+  for v in m {
+    s = s.replace(v.text, v.text.replace(v.captures.first(), "«"))
+  }
+  s = s.replace(regex("[\"\']"), "»")
+
+  return s
+}
+
+sgdfg
+
+
+#string-convert-dumb-quotes(s)
+
+
+#let s1 = s.replace(
+  regex("[^\s]?([\"])[\S]"),
+  m => {
+    let g = m.captures.first()
+    return m.text.replace(g, "«")
+  },
+)
+
+#s1
+
+#let s1 = s.replace(
+  regex("[^\s]?([\"])[\S]"),
+  m => {
+    let g = m.captures.first()
+    return m.text.replace(g, "«")
+  },
+)
+
+
+
+// #let s2=s1.replace(
+//   regex("[\S]([\"])[$\s]?"),
+//   m => {
+//     let g=m.captures.first()
+//     return m.text.replace(g,"»")
+//   },
+// )
+
+
+
+// #s2
+
+
+#let f=1.bit-lshift(3)
+
+#f
+
+#if f.bit-and(8)==8 {}

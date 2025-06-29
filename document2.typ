@@ -1,6 +1,6 @@
 #import "src/tools/pageframe.typ": *
-#import "src/tools/numbering.typ": heading-numbering-ru, enum-numbering
-#import "src/tools/table-tools.typ": table-multi-page
+// #import "src/tools/numbering.typ": heading-numbering-ru, enum-numbering
+// #import "src/tools/table-tools.typ": table-multi-page
 #import "src/style.typ": *
 #import "src/tools/outlines.typ": outline-break-by-enum
 #import "src/tools/enums.typ": *
@@ -8,6 +8,7 @@
 #import "src/tools/referencing.typ": *
 
 #show: style-ver-1.with()
+// #set heading(numbering: "1.1")
 #show: enable-referenceable-enums.with()
 #show outline.entry: outline-break-by-enum.with(0)
 
@@ -15,24 +16,22 @@
 
 #pagebreak()
 
-#set page(background: page-frame-sequence(), margin: (top: 2cm))
+#set page(background: page-frame-sequence(), margin: (top: 2cm, right: 1.5cm))
 
 #document-append-defs("/bibliography/references dev.yml", "/bibliography/references nor.yml")
 
-
-// #docs111.test_tz_0000
+#set text(lang: "ru")
 
 #outline()
 
 = Введение
 
-// #context document-base.final()
 
 #show: enum-set-heading-numbering
 
 = Feature
 
-Простой текст со ссылкой на документ #document-ref("ГОСТ_Р_ИСО_9001"), #document-ref("СТО_95_12076") и #document-ref(<СТО_95_12077>)
+Простой текст со ссылкой на документ #document-ref(<ГОСТ_Р_ИСО_9001>), #document-ref("СТО_95_12076") и #document-ref(<СТО_95_12077>)
 
 // #context type(query(<СТО_95_12077>).first().value)
 
@@ -84,7 +83,8 @@ This is a simple template for testing. #document-ref("СТК-5")
 
 = Заключение
 
-#show: an.annexes.with()
+
+#show: an.annexes-enable
 
 = Схема 1
 
@@ -92,22 +92,32 @@ This is a simple template for testing. #document-ref("СТК-5")
 
 + Тест ссылок на документы в разделе приложения #document-ref("СТО_95_12076"),#document-ref("ГОСТ_Р_8_563"), #document-ref("ГОСТ_Р_15_011")
 
+Текст
 
-#pagebreak()
+// #figure(image("/assets/abstract.jpg"), caption: "Изображение")
+
+= (справочное) \ Схема 2 \ #lorem(20)
+
+// #figure(image("/assets/abstract.jpg"), caption: "Изображение")
+
+// #context query(selector(heading.where(level:1)))
+
+#show: an.annexes-disable
 
 
+= Ссылочные нормативные документы
 #document-display-table(document-type: "legislation", header: header-legislation)
 
-#pagebreak()
-
+= Ссылочные документы
 // #document-display-table(document-type: "reference", header: header-reference)
 
 #show: enum-drop-heading-numbering
 
+= Библиография
 
 #document-display-list()
 
-
+#context document-base.final()
 
 // #context document-referenced-types.get()
 

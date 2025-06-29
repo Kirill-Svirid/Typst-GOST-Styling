@@ -20,5 +20,15 @@
   let folder-func(sel, item) = sel.or(heading.where(body: item, level: 1))
   let selector-structural-heading = structural-heading-titles.values().fold(selector, folder-func)
   show selector-structural-heading: set heading(numbering: none)
+  show selector-structural-heading: set align(center)
+
   body
+}
+
+#let is-heading-in-structural(body) = {
+  if structural-heading-titles.values().contain(it.body) and it.level == 1 {
+    return true
+  } else {
+    return false
+  }
 }

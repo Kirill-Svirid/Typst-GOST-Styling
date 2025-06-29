@@ -106,7 +106,6 @@
 #let style-ver-1(doc) = {
   let header-counter = counter("header-all")
   set page(margin: (left: 30mm, rest: 20mm))
-  set text(lang: "ru", font: "Lucida Console", size: 13pt)
   set heading(numbering: "1.1.1", supplement: none)
   set list(marker: [–])
   set ref(supplement: none)
@@ -125,30 +124,37 @@
   show: set-base-style.with()
 
   show outline.entry: it => {
+    show linebreak: none
+    show par: set par(first-line-indent: 0cm, justify: true)
+
     if is-heading-in-annex(it.element) {
       link(
         it.element.location(),
-        it.indented(
-          none,
-          [Приложение #it.prefix() #it.element.body]
+        block(context par(
+          hanging-indent: measure(it.element.supplement).width + 0.5cm,
+          [#it.element.supplement #it.prefix() #it.element.body]
             + sym.space
             + box(width: 1fr, it.fill)
             + sym.space
             + sym.wj
             + it.page(),
-        ),
+        )),
       )
     } else {
-      it
+      link(it.element.location(), it)
+      // it
     }
   }
 
+
   show heading: it => block(width: 100%)[
     #if not is-empty(it.numbering) {
-      counter(heading).display(it.numbering) + [ ] + [#it.body]
-    } else { it }
-    #v(1cm)
+      h(1.25cm) + counter(heading).display(it.numbering) + [ ] + [#it.body]
+    } else {
+      h(1.25cm) + it.body
+    }
   ]
+
   show link: set text(fill: eastern, weight: "medium")
 
   show image: set align(center)
@@ -167,23 +173,20 @@
     it
   })
 
-
   show: set-heading-titles
   show: set-correct-indent-list-and-enum-items
+
   show heading: it => {
+    set pad(left: 1cm)
     if it.level == 1 {
-      (
-        pagebreak(weak: true)
-          + block(
-            it,
-            fill: color.hsl(200deg, 15%, 75%, 30%),
-            above: 12pt,
-            below: 18pt,
-            inset: 1mm,
-            radius: 1mm,
-          )
-      )
-    } else { it }
+      pagebreak(weak: true)
+      it
+      v(2em)
+    } else if it.level > 1 {
+      set text(size: 13pt)
+      it
+      v(1em)
+    }
     header-counter.step()
   }
   doc
