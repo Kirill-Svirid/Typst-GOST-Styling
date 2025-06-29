@@ -1,6 +1,4 @@
 #import "src/tools/pageframe.typ": *
-// #import "src/tools/numbering.typ": heading-numbering-ru, enum-numbering
-// #import "src/tools/table-tools.typ": table-multi-page
 #import "src/style.typ": *
 #import "src/tools/outlines.typ": outline-break-by-enum
 #import "src/tools/enums.typ": *
@@ -8,7 +6,6 @@
 #import "src/tools/referencing.typ": *
 
 #show: style-ver-1.with()
-// #set heading(numbering: "1.1")
 #show: enable-referenceable-enums.with()
 #show outline.entry: outline-break-by-enum.with(0)
 
@@ -45,7 +42,7 @@
 
 #set enum(numbering: wrapped-enum-numbering("1.a"), full: true)
 
-+ #enum-label[reaf] Разработка ТВС должна выполняться с учётом обеспечения технологичности конструкций составных частей, обеспеченности сырьём и исходными материалами, а также с максимально возможным уровнем унификации.
++ #enum-label[reaf] Разработка ТВС должна выполняться #document-ref(<ГОСТ_Р_15_011>,flags: flg-half-date) с учётом обеспечения технологичности конструкций составных частей, обеспеченности сырьём и исходными материалами, а также с максимально возможным уровнем унификации.
 
 + Изготовление и сборка элементов а.з. должна проводиться в соответствии с #document-ref("СТО_95_12076"),#document-ref("ГОСТ_Р_8_563"), #document-ref("ГОСТ_Р_15_011")
 
@@ -96,20 +93,20 @@ This is a simple template for testing. #document-ref("СТК-5")
 
 // #figure(image("/assets/abstract.jpg"), caption: "Изображение")
 
-= (справочное) \ Схема 2 \ #lorem(20)
+= (справочное) \ Схема 2 \ #lorem(50)
 
+
+#context document-referenced-in-bibliography.final()
 // #figure(image("/assets/abstract.jpg"), caption: "Изображение")
 
-// #context query(selector(heading.where(level:1)))
 
 #show: an.annexes-disable
 
-
 = Ссылочные нормативные документы
-#document-display-table(document-type: "legislation", header: header-legislation)
+#document-display-table(documents: ("legislation",), header: header-legislation)
 
 = Ссылочные документы
-// #document-display-table(document-type: "reference", header: header-reference)
+#document-display-table(documents: ("ПЗ", "ТЗ"), header: header-reference)
 
 #show: enum-drop-heading-numbering
 
@@ -117,13 +114,6 @@ This is a simple template for testing. #document-ref("СТК-5")
 
 #document-display-list()
 
+#pagebreak()
+
 #context document-base.final()
-
-// #context document-referenced-types.get()
-
-// #bibliography(
-//   // "/bibliography/references nor.yml",
-//   "/bibliography/references dev.yml",
-//   full: true,
-//   style: "gost-r-705-2008-numeric",
-// )

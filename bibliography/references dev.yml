@@ -1,5 +1,5 @@
 test_tz_0000:
-  type: reference
+  type: ТЗ
   name: ДОК-ТЗ-0000
   organization: АО «ОРГАНИЗАЦИЯ»
   date: 2024
@@ -8,7 +8,7 @@ test_tz_0000:
     Название локального документа, выпущенного организацией. Техническое задание
 
 test_pz_0001:
-  type: reference
+  type: ПЗ
   name: ДОК-ПЗ-0001
   organization: АО "ОРГАНИЗАЦИЯ"
   date: 2024

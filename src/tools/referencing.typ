@@ -10,8 +10,6 @@
 #let flg-name-nobreak = 5
 
 
-// #let document-type-list = ("legislation", "reference", "test")
-
 /* Все загруженные документы в виде ключ-ключ для упрощения обращения к документам по тексту*/
 #let document-labels = state("document-labels", (:))
 // Все загруженные документы
@@ -20,8 +18,10 @@
 #let document-mentions = state("document-mentions", (:))
 // Ссылки(label), на которые документ может обращаться документ
 #let document-backlinks = state("document-backlinks", (:))
-// Типы документов, на которые уже приведены библиографии, ссылки. Второй раз привести эти типы нельзя
+// Типы документов, на которые уже приведены библиографии. Второй раз привести эти типы нельзя
 #let document-referenced-types = state("document-referenced-types", ())
+// Документы, которые приведены в библиографии
+#let document-referenced-in-bibliography = state("document-referenced-in-bibliography", ())
 
 
 #let header-legislation = (
@@ -206,19 +206,21 @@
 
 // Предназначена для объявления документа по тексту
 #let document-ref(document-item, repr-func: none, flags: none) = context {
-  let document-label
   let headings = query(heading.where(level: 2).or(heading.where(level: 1)).before(here()))
   headings = headings.filter(it => it.numbering != none)
 
+  let docs-base = document-base.final()
+
   assert(
     headings.len() > 0,
-    message: "Ссылка на документ не может быть использована без нумерованных заголовков уровня 1 или 2",
+    message: "Ссылка на документ не может быть использована без нумерованных заголовков уровня 1 или 2, если тип документа находится в ссылочных таблицах",
   )
 
   assert(
     type(document-item) in (str, content, dictionary, label),
     message: "Тип поля (document-item) должно быть строкой, контентом, словарем или label",
   )
+  let document-label
   if type(document-item) == str {
     document-label = document-item
   } else if type(document-item) == label {
@@ -231,7 +233,10 @@
       return s
     })
   }
+  let header-parent = headings.last()
 
+
+  // Update individual document options
   if repr-func != none {
     document-base.update(s => {
       s.at(document-label).at("repr-func") = repr-func
@@ -240,13 +245,15 @@
   }
 
   if flags != none {
+    let flag-array
+    if type(flags) != array { flag-array = (flags,) }
     document-base.update(s => {
-      s.at(document-label).at("flags") = flags
+      s.at(document-label).at("flags") = bits-opt(..flag-array)
       return s
     })
   }
 
-  let header-parent = headings.last()
+  let doc-bib-number = document-referenced-in-bibliography.final().position(it => it == document-label)
 
   document-mentions.update(s => {
     let headers-mentioned = s.at(document-label, default: ())
@@ -268,6 +275,10 @@
   let v = document-base.final().at(document-label, default: none)
   if v != none { document-inline-value = v.name }
 
+  if doc-bib-number != none {
+    document-inline-value = "[" + str(doc-bib-number + 1) + "]"
+  }
+
   if backlink-item != none {
     link(backlink-item, [ #document-inline-value])
   } else {
@@ -284,9 +295,7 @@
     message: "Таблица не может быть сформирована, так в тексте отсутствуют ссылки на документы",
   )
 
-  if type(document-types) in (str, content) {
-    document-types = (document-types,)
-  }
+  assert(type(document-types) == array)
 
   assert(
     document-types.all(it => { not document-referenced-types.get().contains(it) }),
@@ -319,7 +328,7 @@
 }
 
 
-#let document-display-table(document-type: "legislation", header: header-legislation, ..table-args) = context {
+#let document-display-table(documents: "legislation", header: header-legislation, ..table-args) = context {
   show table.cell: it => {
     set text(hyphenate: false)
     if it.x == 1 {
@@ -330,9 +339,10 @@
     }
   }
   let document-types
-  if type(document-type) in (str, content) {
-    document-types = (document-type,)
-  }
+  if type(documents) in (str, content) {
+    document-types = (documents,)
+  } else { document-types = documents }
+
   let table-data = document-get-as-array(document-types)
 
   document-referenced-types.update(s => {
@@ -366,12 +376,9 @@
 
   let types-referenced = document-referenced-types.final()
   docs-mentions = docs-mentions.filter(it => { docs-base.at(it).at("type") not in (types-referenced) })
+  document-referenced-in-bibliography.update(docs-mentions)
+  set text(hyphenate: false)
   for doc in docs-mentions {
     enum.item(document-default-repr(docs-base.at(doc)) + [.])
   }
-  // to-string(document-default-repr-c(docs-base.at(docs-mentions.first())))
-  // let c = document-default-repr-c(docs-base.at(docs-mentions.first())).children
-  // c.push([.])
-  // text(c)
-  // repr(c)
 }
