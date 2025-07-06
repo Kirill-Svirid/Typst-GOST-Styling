@@ -30,7 +30,6 @@
 
 Простой текст со ссылкой на документ #document-ref(<ГОСТ_Р_ИСО_9001>), #document-ref("СТО_95_12076") и #document-ref(<СТО_95_12077>)
 
-// #context type(query(<СТО_95_12077>).first().value)
 
 == Требования к обеспечению безопасности при выполнении работ
 
@@ -42,7 +41,7 @@
 
 #set enum(numbering: wrapped-enum-numbering("1.a"), full: true)
 
-+ #enum-label[reaf] Разработка ТВС должна выполняться #document-ref(<ГОСТ_Р_15_011>,flags: flg-half-date) с учётом обеспечения технологичности конструкций составных частей, обеспеченности сырьём и исходными материалами, а также с максимально возможным уровнем унификации.
++ #enum-label[reaf] Разработка ТВС должна выполняться #document-ref(<ГОСТ_Р_15_011>, flags: flg-half-date) с учётом обеспечения технологичности конструкций составных частей, обеспеченности сырьём и исходными материалами, а также с максимально возможным уровнем унификации.
 
 + Изготовление и сборка элементов а.з. должна проводиться в соответствии с #document-ref("СТО_95_12076"),#document-ref("ГОСТ_Р_8_563"), #document-ref("ГОСТ_Р_15_011")
 
@@ -79,6 +78,7 @@ This is a simple template for testing. #document-ref("СТК-5")
 
 
 = Заключение
+#figure(image("/assets/abstract.jpg", width: 60%), caption: "Изображение")
 
 
 #show: an.annexes-enable
@@ -91,13 +91,25 @@ This is a simple template for testing. #document-ref("СТК-5")
 
 Текст
 
-// #figure(image("/assets/abstract.jpg"), caption: "Изображение")
+
+#figure(image("/assets/abstract.jpg"), caption: "Изображение")
 
 = (справочное) \ Схема 2 \ #lorem(50)
 
 
-#context document-referenced-in-bibliography.final()
-// #figure(image("/assets/abstract.jpg"), caption: "Изображение")
+#figure(image("/assets/abstract.jpg", width: 60%), caption: "Изображение")<p>
+
+Ссылка на рис.#ref(<p>)
+
+
+#figure(
+  table(
+    columns: (3cm, 4cm, 1fr),
+    [], [], [text],
+    [], [], [text],
+  ),
+  caption: "Изображение",
+)
 
 
 #show: an.annexes-disable
@@ -114,6 +126,5 @@ This is a simple template for testing. #document-ref("СТК-5")
 
 #document-display-list()
 
-#pagebreak()
 
-#context document-base.final()
+// #context document-base.final()
