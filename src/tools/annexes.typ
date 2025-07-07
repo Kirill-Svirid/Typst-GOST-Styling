@@ -83,7 +83,6 @@
         message: "В приложениях не может быть структурных заголовков или заголовков без нумерации" + repr(it.body),
       )
       pagebreak()
-      // counter("annex").step()
 
       block([#it.supplement #numbering(
           it.numbering,
