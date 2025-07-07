@@ -25,8 +25,8 @@
   body
 }
 
-#let is-heading-in-structural(body) = {
-  if structural-heading-titles.values().contain(it.body) and it.level == 1 {
+#let is-heading-in-structural(heading) = {
+  if structural-heading-titles.values().position(it => it == heading.body) != none and heading.level == 1 {
     return true
   } else {
     return false

@@ -1,5 +1,5 @@
-#import "tools/headings.typ": set-heading-titles, structural-heading-titles
-#import "tools/annexes.typ": is-heading-in-annex
+#import "tools/headings.typ": *
+#import "tools/annexes.typ": *
 #import "tools/pageframe.typ": page-frame-sequence
 #import "tools/base.typ": *
 #import "@preview/t4t:0.4.3": is-empty
@@ -104,14 +104,14 @@
 }
 
 #let style-ver-1(doc) = {
+  show: set-base-style.with()
   let header-counter = counter("header-all")
   set page(margin: (left: 30mm, rest: 20mm))
   set heading(numbering: "1.1.1", supplement: none)
   set list(marker: [–])
   set ref(supplement: none)
 
-  set math.equation(numbering: "(1)")
-  set figure.caption(separator: " — ")
+  set figure.caption(separator: " - ")
 
   set par(
     first-line-indent: (
@@ -121,12 +121,10 @@
     justify: true,
   )
 
-  show: set-base-style.with()
 
   show outline.entry: it => {
     show linebreak: none
     show par: set par(first-line-indent: 0cm, justify: true)
-
     if is-heading-in-annex(it.element) {
       link(
         it.element.location(),
@@ -142,7 +140,6 @@
       )
     } else {
       link(it.element.location(), it)
-      // it
     }
   }
 
@@ -157,29 +154,44 @@
 
   show link: set text(fill: eastern, weight: "medium")
 
-  show image: set align(center)
-  show figure.where(kind: table): set figure.caption(position: top)
-
-  show figure: it => block(if it.has("caption") {
-    show figure.caption: caption => {
-      set align(left)
-      set par(first-line-indent: (amount: 0cm))
-      if caption.numbering != none {
-        caption.supplement + [ ]
-        numbering(caption.numbering, ..counter(figure).at(it.location())) + [ \- ] + caption.body
-        v(-2mm)
-      }
-    }
+  show figure.where(kind: table): it => {
+    set figure.caption(position: top)
+    set align(left)
     it
-  })
+  }
+
+  show figure.caption.where(kind: image): it => {
+    v(0.5em)
+    it
+  }
+
+  set figure(
+    numbering: n => context {
+      let appx = state("annexes", false).get()
+      let hdr = counter(heading).get()
+      let h = query(heading.where(level: 1).before(here())).last()
+      if appx {
+        numbering(heading-numbering-ru, hdr.first(), n)
+      } else if h.numbering != none {
+        numbering("1.1", hdr.first(), n)
+      } else {
+        numbering("1", n)
+      }
+    },
+  )
+  show figure: set block(breakable: true)
 
   show: set-heading-titles
+
   show: set-correct-indent-list-and-enum-items
 
   show heading: it => {
     set pad(left: 1cm)
+
     if it.level == 1 {
       pagebreak(weak: true)
+      counter(figure.where(kind: image)).update(0)
+      counter(figure.where(kind: table)).update(0)
       it
       v(2em)
     } else if it.level > 1 {

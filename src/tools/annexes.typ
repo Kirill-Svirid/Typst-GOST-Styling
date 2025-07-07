@@ -75,7 +75,7 @@
 
   show heading: it => {
     if is-heading-in-annex(it) {
-      set block(width:100%, fill: color.hsl(203deg, 30%, 83%,50%), radius: 1mm,inset: 3mm)
+      set block(width: 100%, fill: color.hsl(203deg, 30%, 83%, 50%), radius: 1mm, inset: 3mm)
 
       set align(center)
       assert(
@@ -85,12 +85,12 @@
       pagebreak()
       // counter("annex").step()
 
-      block(
-        [#it.supplement #numbering(
-            it.numbering,
-            ..counter(heading).at(it.location()),
-          ) \ #it.body],
-      )
+      block([#it.supplement #numbering(
+          it.numbering,
+          ..counter(heading).at(it.location()),
+        ) \ #it.body])
+      counter(figure.where(kind: image)).update(0)
+      counter(figure.where(kind: table)).update(0)
     } else { it }
   }
 
