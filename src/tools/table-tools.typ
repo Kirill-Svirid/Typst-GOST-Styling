@@ -36,7 +36,6 @@
   grid(
     inset: 0mm,
     row-gutter: 2mm,
-    fill: color.hsl(188.68deg, 32.76%, 54.51%, 8.1%),
     grid.header(grid.cell(align(left + bottom)[ #continue-header-label <table-header> ])),
     ..table-args,
     grid.footer(grid.cell(align(right + top)[#continue-footer-label <table-footer> ]))

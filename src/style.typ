@@ -111,7 +111,6 @@
   set list(marker: [–])
   set ref(supplement: none)
 
-  set math.equation(numbering: "(1)")
   set figure.caption(separator: " - ")
 
   set par(
@@ -126,7 +125,6 @@
   show outline.entry: it => {
     show linebreak: none
     show par: set par(first-line-indent: 0cm, justify: true)
-
     if is-heading-in-annex(it.element) {
       link(
         it.element.location(),
@@ -142,8 +140,6 @@
       )
     } else {
       link(it.element.location(), it)
-
-      // it
     }
   }
 
@@ -174,7 +170,6 @@
       let appx = state("annexes", false).get()
       let hdr = counter(heading).get()
       let h = query(heading.where(level: 1).before(here())).last()
-      // let format = 
       if appx {
         numbering(heading-numbering-ru, hdr.first(), n)
       } else if h.numbering != none {
@@ -184,6 +179,7 @@
       }
     },
   )
+  show figure: set block(breakable: true)
 
   show: set-heading-titles
 
@@ -191,6 +187,7 @@
 
   show heading: it => {
     set pad(left: 1cm)
+
     if it.level == 1 {
       pagebreak(weak: true)
       counter(figure.where(kind: image)).update(0)
