@@ -196,6 +196,7 @@
       v(2em)
     } else if it.level > 1 {
       set text(size: 13pt)
+      v(1em)
       it
       v(1em)
     }
