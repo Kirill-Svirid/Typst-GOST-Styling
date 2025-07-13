@@ -47,8 +47,14 @@
   if type(label) == content {
     std.assert(label.has("text"), message: "enum-label requires text content")
     label = label.text
+    [#enum-label-mark#std.label(label)]
+  } else if type(label) == std.label {
+    [#enum-label-mark#label]
+  } else if type(label) == str {
+    [#enum-label-mark#std.label(label)]
+  } else {
+    panic("Unexpected value")
   }
-  [#enum-label-mark#std.label(label)]
 }
 
 
@@ -87,6 +93,11 @@
 #let _enum-heading-numbering(..nums) = {
   let headings = query(selector(heading).before(here()))
   let last = headings.at(-1)
+  assert(
+    last.numbering != none,
+    message: "Нумерованных пунктов не может быть в заголовке без нумерации.\n Ошибка возникла в заголовке:"
+      + repr(last.body),
+  )
   counter(heading).step(level: last.level + nums.pos().len())
   context { counter(heading).display() }
 }

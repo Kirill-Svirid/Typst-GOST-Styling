@@ -378,6 +378,7 @@
   docs-mentions = docs-mentions.filter(it => { docs-base.at(it).at("type") not in (types-referenced) })
   document-referenced-in-bibliography.update(docs-mentions)
   set text(hyphenate: false)
+  set enum(numbering: "1)", full: true)
   for doc in docs-mentions {
     enum.item(document-default-repr(docs-base.at(doc)) + [.])
   }
