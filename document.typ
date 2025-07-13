@@ -5,7 +5,7 @@
   page-footer-sequence,
   page-layout-sequence,
 )
-#import "src/tools/numbering.typ": heading-numbering-ru, enum-numbering
+#import "src/tools/numbering.typ": heading-numbering-ru, _enum-numbering
 #import "src/tools/annexes.typ": *
 #import "src/tools/table-tools.typ": table-multi-page
 #import "src/tools/headings.typ": headings

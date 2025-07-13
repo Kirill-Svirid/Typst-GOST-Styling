@@ -3,6 +3,7 @@
 #import "src/tools/outlines.typ": outline-break-by-enum
 #import "src/tools/enums.typ": *
 #import "src/tools/annexes.typ" as an
+#import "src/tools/numbering.typ": *
 #import "src/tools/referencing.typ": *
 #import "src/tools/table-tools.typ": *
 
@@ -25,7 +26,7 @@
 = Введение
 
 
-#show: enum-set-heading-numbering
+#show: enum-heading-numbering
 
 = Feature
 
@@ -40,25 +41,48 @@
 
 == Требования по обеспечению государственной тайны при выполнении НИР и ОКР
 
-#set enum(numbering: wrapped-enum-numbering("1.a"), full: true)
+// #set enum(numbering: wrapped-enum-numbering("1.a"), full: true)
 
-+ #enum-label[reaf] Разработка ТВС должна выполняться #document-ref(<ГОСТ_Р_15_011>, flags: flg-half-date) с учётом обеспечения технологичности конструкций составных частей, обеспеченности сырьём и исходными материалами, а также с максимально возможным уровнем унификации.
++ Разработка ТВС должна выполняться #document-ref(<ГОСТ_Р_15_011>, flags: flg-half-date) с учётом обеспечения технологичности конструкций составных частей, обеспеченности сырьём и исходными материалами, а также с максимально возможным уровнем унификации.
 
 + Изготовление и сборка элементов а.з. должна проводиться в соответствии с #document-ref("СТО_95_12076"),#document-ref("ГОСТ_Р_8_563"), #document-ref("ГОСТ_Р_15_011")
 
-#show: enum-drop-heading-numbering
+// #show: enum-drop-heading-numbering
 
 = Feature
 
-#show: enum-set-heading-numbering
+Text #ref(<reaf>)
+
+// #show: enum-set-heading-numbering
 + Технология изготовления, правила и методы приёмки и контроля ТВС должны обеспечивать:
 
-// #show:enum-drop-heading-numbering
 
-#set enum(numbering: "a.1")
+#show: enum-list-numbering
+
+
++ сохранение герметичности в #enum-label[reaf] течение назначенного срока службы и назначенного срока хранения твэлов в составе ТВС.
++ Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
+  + Элемент текста #lorem(12)
+  + Элемент текста #lorem(12)
+  + Элемент текста #lorem(12)
+  + Элемент текста #lorem(12)
+  + Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
+  + Элемент текста #lorem(12)
+  + Элемент текста #lorem(12)
+  + Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
++ Элемент текста #lorem(12)
 + сохранение герметичности в течение назначенного срока службы и назначенного срока хранения твэлов в составе ТВС.
 
-#show: enum-set-heading-numbering
+#show: enum-heading-numbering
 + Порядок контроля должен быть определён на этапе разработки ТП.
 
 + На готовом изделии должны контролироваться параметры, указанные в 4.6.8.
@@ -142,7 +166,7 @@ This is a simple template for testing. #document-ref("СТК-5")
 = Ссылочные документы
 #document-display-table(documents: ("ПЗ", "ТЗ"), header: header-reference)
 
-#show: enum-drop-heading-numbering
+// #show: enum-drop-heading-numbering
 
 = Библиография
 

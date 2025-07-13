@@ -4,22 +4,6 @@
 #import "tools/base.typ": *
 #import "@preview/t4t:0.4.3": is-empty
 
-#let enum-set-heading-numbering(doc) = {
-  set enum(
-    numbering: (..n) => context {
-      let headings = query(selector(heading).before(here()))
-      let last = headings.at(-1)
-      counter(heading).step(level: last.level + n.pos().len())
-      context { counter(heading).display() }
-    },
-  )
-  doc
-}
-
-#let enum-drop-heading-numbering(doc) = {
-  set enum(numbering: "1")
-  doc
-}
 
 #let set-correct-indent-list-and-enum-items(doc) = {
   let first-line-indent() = if type(par.first-line-indent) == dictionary {

@@ -1,3 +1,5 @@
+#import "@preview/t4t:0.4.3": is-empty
+
 #let get-numbering-alphabet-ru(number) = {
   let alphabet = (
     "а",
@@ -27,13 +29,80 @@
     "ю",
     "я",
   )
-
   let result = ""
   while number > 0 {
     result = alphabet.at(calc.rem(number - 1, 28)) + result
     number = calc.floor(number / 28)
   }
   return result
+}
+
+// Purpose: track enumeration items
+#let enum-counter-name = "enum-counter"
+#let enum-numbering-state = state("enum-numbering", none)
+#let enum-label-mark = metadata("enumeration_label")
+
+
+#let enum-label(label) = {
+  if type(label) == content {
+    std.assert(label.has("text"), message: "enum-label requires text content")
+    label = label.text
+  }
+  [#enum-label-mark#std.label(label)]
+}
+
+
+
+
+#let enable-referenceable-enums(doc) = {
+  show ref: it => {
+    let el = it.element
+    if el != none and el.func() == metadata and el == enum-label-mark {
+      let supp = it.supplement
+      if supp == auto { supp = "Item" }
+      // get the counter value in the correct format according to location
+      let loc = el.location()
+      let ref-counter = context numbering(state("enum-numbering").at(loc), ..counter(enum-counter-name).at(loc))
+      if is-empty(supp) {
+        link(el.location(), ref-counter)
+      } else {
+        link(el.location(), box([#supp~#ref-counter]))
+      }
+    } else {
+      it
+    }
+  }
+  doc
+}
+
+#let wrapped-enum-numbering(numbering) = {
+  let enum-numbering = (..it) => {
+    enum-numbering-state.update(x => numbering)
+    counter(enum-counter-name).update(it.pos())
+    std.numbering(numbering, ..it)
+  }
+  enum-numbering
+}
+
+#let _enum-heading-numbering(..nums) = {
+  let headings = query(selector(heading).before(here()))
+  let last = headings.at(-1)
+  counter(heading).step(level: last.level + nums.pos().len())
+  context { counter(heading).display() }
+}
+
+
+
+#let _enum-numbering(..nums) = {
+  nums = nums.pos()
+  assert(nums.len() <= 2, message: "Уровень вложенности не должен превышать 2")
+  let letter = get-numbering-alphabet-ru(nums.first())
+  let rest = nums.slice(1).map(elem => str(elem))
+  if rest.len() == 0 {
+    return letter + ")"
+  } else {
+    return rest.last() + ")"
+  }
 }
 
 
@@ -48,4 +117,20 @@
 }
 
 
-#let enum-numbering(number) = { return [#get-numbering-alphabet-ru(number))] }
+#let enum-heading-numbering(doc) = {
+  set enum(
+    numbering: wrapped-enum-numbering(_enum-heading-numbering),
+    indent: 1.25cm,
+    full: true,
+  )
+  doc
+}
+
+#let enum-list-numbering(doc) = {
+  set enum(
+    numbering: wrapped-enum-numbering(_enum-numbering),
+    indent: 1.25cm,
+    full: true,
+  )
+  doc
+}
